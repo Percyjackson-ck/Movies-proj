@@ -18,7 +18,7 @@ const Register = () => {
     const navigate = useNavigate();
 
     const [register, { isloading }] = useRegisterMutation();
-    const userInfo = useSelector((state) => state.auth?.userInfo);
+    const {userInfo} = useSelector((state) => state.auth?.userInfo);
 
     const { search } = useLocation();
     const sp = new URLSearchParams(search);
