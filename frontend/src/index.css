@@ -20,3 +20,10 @@ select option{
     min-height: 90vh; 
     display: flex;
 }
+.login-container {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)),  
+                url('https://images.justwatch.com/backdrop/323453451/s640/the-power-of-film') 
+                no-repeat center center / cover;
+    min-height: 90vh; 
+    display: flex;
+}

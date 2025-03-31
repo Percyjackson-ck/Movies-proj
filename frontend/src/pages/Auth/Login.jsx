@@ -52,7 +52,7 @@ const Login = () => {
 
   return (
     <div>
-      <section className='pl-[10rem] flex flex-wrap'>
+      <section className='pl-[10rem] flex flex-wrap login-container'>
         <div className='mr-[4rem] mt-[5rem]'>
           <h1 className='text-2xl'>Sign In</h1>
        <form  onSubmit={submitHandler} className='container w-[40rem]'>

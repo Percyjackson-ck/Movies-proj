@@ -3,7 +3,7 @@ import { AiOutlineHome, AiOutlineLogin, AiOutlineUserAdd } from 'react-icons/ai'
 import { MdOutlineLocalMovies } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLoginMutation } from '../../redux/api/users';
+import { useLogoutMutation} from '../../redux/api/users';
 import { logout } from '../../redux/feature/auth/authSlice';
 
 const Navigation = () => {
@@ -19,12 +19,23 @@ const Navigation = () => {
 
   const navigate = useNavigate();
 
-  const [logApiCall] = useLoginMutation();
+  const [logoutApiCall] = useLogoutMutation();
+
+  const logoutHandler=async()=>{
+       try {
+        await logoutApiCall().unwrap();
+        dispatch(logout());
+        navigate('/login')
+       } catch (error) {
+        console.log(error);
+        
+       }
+  }
 
   return (
     <div
   
-   className="fixed bottom-10 left-[30rem] transform translate-x-1/2 translate-y-1/2
+   className="fixed bottom-10 left-[50rem] transform translate-x-1/2 translate-y-1/2
    z-50 bg-[#0f0f0f] border w-[30%] px-[4rem] mb-[2rem] rounded "
     >
       <section className="flex justify-between items-center">
@@ -105,7 +116,7 @@ const Navigation = () => {
 
               <li>
               <button 
-              // onClick={logoutHandler} 
+              onClick={logoutHandler} 
               className="block w-full text-left px-4 py-2 hover:bg-gray-100"
               >
                 Logout
