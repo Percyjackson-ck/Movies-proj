@@ -35,6 +35,55 @@ const GenreList = () => {
             toast.error("creating genre failed,try again")
         }
     }
+
+    const handleUpdateGenre=async(e)=>{
+        e.preventDefault();
+        if(!updatingName){
+            toast.error("Genre name is required")
+
+        }
+        try {
+            const result =await updateGenre(
+                {
+                    id:selectedGenre._id,
+                    updateGenre:{
+                        name:updatingName,
+                    }
+                }
+            ).unwrap();
+            if(result.error){
+                toast.error(result.error)
+            }
+            else{
+                toast.success(`${result.name} is updated`)
+                refetch();
+                setSelectedGenre(null)
+                setUpdatingName("");
+                setModalVisible(false);
+            }
+        } catch (error) {
+            console.error(error)
+
+        }
+    }
+
+
+
+    const handleDelete=async()=>{
+      try{
+      const result=await deleteGenre(selectedGenre._id).unwrap()
+      if(result.error){
+        toast.error(result.error)
+      }else{
+        toast.success(`${result.name} is deleted`)
+        refetch()
+        setSelectedGenre(null);
+        setModalVisible(false)
+      }
+      }catch(error){
+    
+      }
+    }
     return (
         <div className='ml-[10rem] flex flex-col md:flex-row'>
             <div className='md:w-3/4 p-3'>
@@ -53,7 +102,7 @@ const GenreList = () => {
                          focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50                         
                                 ' onClick={()=>{
                                    { setModalVisible(true);
-                                    setSelectedGenre(true)
+                                    setSelectedGenre(genre)
                                     setUpdatingName(genre.name)
                                    }
 
@@ -64,9 +113,9 @@ const GenreList = () => {
                 </div>
                 <Modal isOpen={modalVisible} onClose={()=>setModalVisible(false )}>
                     <GenreFrom value={updatingName} setValue={(value)=>setUpdatingName(value)}
-                    // handelSubmit={handleUpdateGenre}
+                    handleSubmit={handleUpdateGenre}
                     buttonText="Update"
-                    // handleDelete={handleDelete}
+                    handleDelete={handleDelete}
                     />
                 </Modal>
 
