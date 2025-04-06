@@ -90,4 +90,95 @@ const movieReview=async(req,res)=>{
           
     }
 }
-export {createMovie,getAllMovies,getSpecificMovie,updateMovie,movieReview}
+
+const deleteMovie=async(req,res)=>{
+    try{
+      const {id}=req.params;
+      const deleteMovie=await Movie.findByIdAndDelete(id);
+    if(!deleteMovie){
+        return res.status(404).json({message:"Movie not found"})
+    }
+    res.json({message:"Movie deleted sucessfully"})
+
+    }
+    catch(error){
+      console.error(error);
+      res.status(500).json({error:error.message})
+    }
+}
+
+
+const deleteComment=async(req,res)=>{
+    try{
+    const {movieId,reviewId}=req.body;
+    const movie=await Movie.findById(movieId);
+
+    if(!movie){
+        return res.status(404).json({message:"Movie not found"})
+
+    }
+    const reviewIndex=movie.reviews.findIndex((r)=>r._id.toString()===reviewId)
+
+    if(reviewIndex===-1){
+        return res.status(404).json({message:"Comment not found"})
+
+    }
+    movie.reviews.splice(reviewIndex,1)
+    movie.numReviews=movie.reviews.length
+    movie.rating=movie.reviews.length>0?movie.reviews.reduce((acc,items)=>items.rating+acc,0)/movie.reviews.length:0;
+    await movie.save();
+    res.json({message:"Comment deleted sucessfully"})
+
+    }catch(error){
+         console.error(error)
+         res.status(500).json({error:error.message})
+    }
+}
+const getNewMovies=async(req,res)=>{
+    try{
+        const newMovies=await Movie.find().sort({createdAt:-1}).limit(10)
+        res.json(newMovies)
+    }
+    catch(error){
+        res.status(500).json({error:error.message})
+    }
+}
+const getTopMovies = async (req, res) => {
+  try {
+    const topRatedMovies = await Movie.aggregate([
+      {
+        $match: {
+          reviews: { $exists: true, $ne: [] } // only movies with reviews
+        }
+      },
+      {
+        $addFields: {
+          numReviews: { $size: "$reviews" },
+          averageRating: { $avg: "$reviews.rating" }
+        }
+      },
+      {
+        $sort: {
+          averageRating: -1,
+          numReviews: -1
+        }
+      },
+      {
+        $limit: 10
+      }
+    ]);
+
+    res.json(topRatedMovies);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const getRandomMovies=async(req,res)=>{
+    try{
+  const randomMovies=await Movie.aggregate([{$sample:{size:10}}])
+  res.json(randomMovies);
+    }catch(error){
+        res.status(500).json({error:error.message})
+    }
+}
+export {createMovie,getAllMovies,getSpecificMovie,updateMovie,movieReview,deleteMovie,deleteComment,getNewMovies,getTopMovies,getRandomMovies}
