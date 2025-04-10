@@ -145,28 +145,32 @@ const getNewMovies=async(req,res)=>{
 }
 const getTopMovies = async (req, res) => {
   try {
-    const topRatedMovies = await Movie.aggregate([
-      {
-        $match: {
-          reviews: { $exists: true, $ne: [] } // only movies with reviews
-        }
-      },
-      {
-        $addFields: {
-          numReviews: { $size: "$reviews" },
-          averageRating: { $avg: "$reviews.rating" }
-        }
-      },
-      {
-        $sort: {
-          averageRating: -1,
-          numReviews: -1
-        }
-      },
-      {
-        $limit: 10
-      }
-    ]);
+    // const topRatedMovies = await Movie.aggregate([
+    //   {
+    //     $match: {
+    //       reviews: { $exists: true, $ne: [] } // only movies with reviews
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       numReviews: { $size: "$reviews" },
+    //       averageRating: { $avg: "$reviews.rating" }
+    //     }
+    //   },
+    //   {
+    //     $sort: {
+    //       averageRating: -1,
+    //       numReviews: -1
+    //     }
+    //   },
+    //   {
+    //     $limit: 10
+    //   }
+    // ]);
+    const topRatedMovies = await Movie.find({ numReviews: { $gt: 0 } })
+  .sort({ rating: -1, numReviews: -1 })
+  .limit(10);
+
 
     res.json(topRatedMovies);
   } catch (error) {
