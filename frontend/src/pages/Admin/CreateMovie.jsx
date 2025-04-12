@@ -34,10 +34,10 @@ useEffect(()=>{
         
     }
 },[genres])
-useEffect(() => {
-    // Log movie data whenever it changes
-    console.log("Updated movie data with default genre:", movieData);
-  }, [movieData]); 
+// useEffect(() => {
+//     // Log movie data whenever it changes
+//     console.log("Updated movie data with default genre:", movieData);
+//   }, [movieData]); 
 
 
 const handelChange=(e)=>{
@@ -168,7 +168,7 @@ toast.error(`Failed to create movie${createMovieErrorDetail}`)
 
            >
             {isLoadingGenres?(<option>Loading Genres...</option>):(genres.map((genre)=>(
-                <option key={genre._id} value={genre._id}>
+                <option key={genre.id} value={genre.id}>
                     {genre.name}
                 </option>
             )))}
