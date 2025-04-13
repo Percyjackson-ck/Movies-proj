@@ -1,55 +1,72 @@
 import { Link } from "react-router-dom";
 import { useGetAllMoviesQuery } from "../../redux/api/movies";
+import { useFetchGenreQuery } from '../../redux/api/genre';
 
 const AdminMoviesList = () => {
-  const { data: movies } = useGetAllMoviesQuery();
+  // Fetch all movies
+  const { data: movies, isLoading: moviesLoading, error: moviesError } = useGetAllMoviesQuery();
+  // Fetch genres
+  const { data: genres, isLoading: genresLoading, error: genresError } = useFetchGenreQuery();
+
+  if (moviesLoading || genresLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (moviesError || genresError) {
+    return <div>Error loading data!</div>;
+  }
+
+  // Group movies by genre
+  const moviesByGenre = genres?.reduce((acc, genre) => {
+    const genreMovies = movies?.filter((movie) =>
+      movie.genre && movie.genre === genre._id // Compare movie.genre with genre._id
+    );
+    acc[genre.name] = genreMovies;
+    return acc;
+  }, {});
+
+  console.log("Movies by Genre:", moviesByGenre); // Check if genres are grouped correctly
 
   return (
-    <div className="container mx-[9rem]">
-      <div className="flex flex-col md:flex-row">
-        <div className="p-3">
-          <div className="ml-[2rem] text-xl font-bold h-12">
-            All Movies ({movies?.length})
-          </div>
+    <div className="container mx-auto px-4 max-w-full overflow-x-hidden">
+      {/* Title */}
+      <h2 className="text-2xl font-bold mt-6 mb-10 ml-[70px]">
+        All Movies ({movies?.length || 0})
+      </h2>
 
-          <div className="flex flex-wrap justify-around items-center p-[2rem]">
-            {movies?.map((movie) => (
-              <Link
-                key={movie._id}
-                to={`/admin/movies/update/${movie._id}`}
-                className="block mb-4 overflow-hidden"
-              >
-                <div className="flex">
-                  <div
-                    key={movie._id}
-                    className="max-w-sm  m-[2rem] rounded overflow-hidden shadow-lg"
-                  >
-                    <img
-                      src={movie.image}
-                      alt={movie.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="px-6 py-4 border border-gray-400">
-                      <div className="font-bold text-xl mb-2">{movie.name}</div>
-                    </div>
+      {/* Genres */}
+      {genres?.map((genre) => (
+        <div key={genre._id} className="mb-12 ml-[70px]">
+          <h3 className="text-xl font-bold mb-4">{genre.name}</h3>
 
-                    <p className="text-gray-700 text-base">{movie.detail}</p>
-
-                    <div className="mt-[2rem] mb-[1rem]">
-                      <Link
-                        to={`/admin/movies/update/${movie._id}`}
-                        className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
-                      >
-                        Update Movie
-                      </Link>
-                    </div>
+          {/* Display a message if no movies are found for this genre */}
+          {moviesByGenre[genre.name]?.length === 0 ? (
+            <p>No movies found for this genre.</p>
+          ) : (
+            <div className="flex gap-6 overflow-x-auto whitespace-nowrap pb-2">
+              {moviesByGenre[genre.name]?.map((movie) => (
+                <Link
+                  key={movie._id}
+                  to={`/admin/movies/update/${movie._id}`}
+                  className="min-w-[200px] max-w-[300px] flex-shrink-0 relative group block overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-[1.02]"
+                >
+                  <img
+                    src={movie.image}
+                    alt={movie.name}
+                    className="w-full h-60 object-cover"
+                  />
+                  {/* Title Overlay */}
+                  <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/60 to-transparent px-3 py-2">
+                    <h3 className="text-white text-sm sm:text-base font-semibold truncate">
+                      {movie.name}
+                    </h3>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
+      ))}
     </div>
   );
 };
