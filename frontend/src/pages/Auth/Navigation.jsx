@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { AiOutlineHome, AiOutlineLogin, AiOutlineUserAdd } from "react-icons/ai";
 import { MdOutlineLocalMovies } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate ,useLocation} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "../../redux/api/users";
 import { logout } from "../../redux/feature/auth/authSlice";
 
 const Navigation = () => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  if (currentPath === "/") {
+    return null; 
+  }
   const userInfo = useSelector((state) => state.auth.userInfo);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);

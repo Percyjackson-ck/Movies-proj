@@ -84,6 +84,7 @@ export const {
     useUpdateMovieMutation,
     useAddMovieReviewMutation,
     useDeleteCommentMutation,
+    useDeleteMovieMutation,
     useGetSpecificMovieQuery,
     useUploadImageMutation,
     useGetNewMoviesQuery,
