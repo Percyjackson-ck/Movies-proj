@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 
+/* This ensures each slick-slide is a block with proper width */
 
+  
 body{
     background-color: black;
     color: #fff;
@@ -27,3 +29,5 @@ select option{
     min-height: 90vh; 
     display: flex;
 }
+
+  
