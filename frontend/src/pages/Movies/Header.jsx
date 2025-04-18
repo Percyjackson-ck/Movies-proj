@@ -1,10 +1,13 @@
 import SliderUtil from "../../components/SliderUtil";
-import { useGetNewMoviesQuery } from "../../redux/api/movies";
+import { useGetNewMoviesQuery,useGetAllMoviesQuery } from "../../redux/api/movies";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const { data } = useGetNewMoviesQuery();
+  const { data: movies, isLoading, error } = useGetAllMoviesQuery();
+console.log(movies);
 
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading movies</p>;
   return (
     <div className="flex flex-col mt-[2rem] ml-[2rem] md:flex-row justify-between items-center md:items-start">
       <nav className="w-full md:w-[10rem] ml-0 md:ml-2 mb-4 md:mb-0">
@@ -22,8 +25,8 @@ const Header = () => {
         </Link>
       </nav>
 
-      <div className="w-full md:w-[90%] mr-0 md:mr-2 ">
-        <SliderUtil data={data} />
+      <div className="w-70% md:w-[80%]  md:mr-10 ml-2 ">
+        <SliderUtil data={movies} />
       </div>
     </div>
   );
