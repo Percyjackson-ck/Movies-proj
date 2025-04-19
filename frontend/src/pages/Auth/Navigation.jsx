@@ -10,7 +10,7 @@ const Navigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  if (currentPath === "/") {
+  if (currentPath === "/" || currentPath==='/admin/movies/dashboard') {
     return null; 
   }
   const userInfo = useSelector((state) => state.auth.userInfo);
